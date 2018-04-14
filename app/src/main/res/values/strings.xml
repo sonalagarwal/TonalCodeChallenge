@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">TonalWeatherTestApp</string>
+    <string name="no_results">No Results</string>
+    <string name="search_hint">Ex: 94804,us</string>
+    <string name="searchBtn_text">Search</string>
+    <string name="error_msg_server">Failed to get valid results, please check the zip code</string>
+    <string name="error_msg_network">Hey, please check your connection</string>
+    <string name="error_msg_network_generic">Well, we don\'t really know what went wrong</string>
+</resources>
