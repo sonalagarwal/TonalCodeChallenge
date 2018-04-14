@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data class="ItemBinding">
+
+        <import type="android.view.View" />
+
+        <variable
+            name="itemViewModel"
+            type="com.tonal.test.view.viewmodel.WeatherItemViewModel">
+
+        </variable>
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text='@{itemViewModel.day }' />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text='@{"Max Temp: " + itemViewModel.max_temp + " F"}' />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text='@{"Min Temp: " + itemViewModel.min_temp + " F"}' />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text='@{"Humidity: " + itemViewModel.humidity + " %"}'/>
+
+    </LinearLayout>
+</layout>
