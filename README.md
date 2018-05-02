@@ -23,3 +23,14 @@ At this point, you should be able to build and run the project in the Android de
 # Android Version Targeting
 
 The application is currently built to work with Android API 26. However, App's minimum SDK support is Android API 14.
+
+# What the Application Does
+
+The Application fetches last five days weather(Every 3 hours) information and displays the Min/Max Temp and average humidity
+for each day.
+
+# Things which can be improved
+
+1) UI only shows proof of concept and can be improved
+2) Did not test the application for landscape mode.
+3) Could have written more unit test cases specially around view model. Skipped this as did not want to spend more than 2-3 hours on the app development.
