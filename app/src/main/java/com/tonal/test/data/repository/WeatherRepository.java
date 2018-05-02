@@ -1,6 +1,7 @@
 package com.tonal.test.data.repository;
 
 import com.tonal.test.data.model.Results;
+import com.tonal.test.data.model.WeatherData;
 import com.tonal.test.data.remote.APIService;
 import com.tonal.test.utils.APIUtils;
 
@@ -28,6 +29,12 @@ public class WeatherRepository {
     public Single<Results> getWeather(String zipCode) {
 
         return service.getWeatherData(zipCode, APIUtils.getAppId(), "imperial");
+
+    }
+
+    public Single<WeatherData> getTodayWeatherData(String zipCode) {
+
+        return service.getTodaysWeather(zipCode, APIUtils.getAppId(), "imperial");
 
     }
 }

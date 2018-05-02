@@ -1,5 +1,7 @@
 package com.tonal.test.data.model;
 
+import android.arch.persistence.room.Entity;
+
 import java.util.List;
 
 /**

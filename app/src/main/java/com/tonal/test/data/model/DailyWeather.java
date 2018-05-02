@@ -9,6 +9,8 @@ public class DailyWeather {
     private double tempMin;
     private double tempMax;
     private int humidityAvg;
+    public int viewType;
+
 
     public DailyWeather(long date, double min, double max, int humidity) {
         this.date = date;
@@ -43,5 +45,13 @@ public class DailyWeather {
 
     public void setHumidityAvg(int humidityAvg) {
         this.humidityAvg = humidityAvg;
+    }
+
+    public int getViewType() {
+        return viewType;
+    }
+
+    public void setViewType(int viewType) {
+        this.viewType = viewType;
     }
 }

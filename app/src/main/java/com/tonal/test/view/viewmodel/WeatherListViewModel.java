@@ -1,5 +1,7 @@
 package com.tonal.test.view.viewmodel;
 
+import android.annotation.SuppressLint;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.ObservableArrayList;
@@ -11,6 +13,7 @@ import android.util.Log;
 import com.tonal.test.R;
 import com.tonal.test.data.model.CityDailyWeather;
 import com.tonal.test.data.model.DailyWeather;
+import com.tonal.test.data.model.Results;
 import com.tonal.test.data.model.Temperature;
 import com.tonal.test.data.model.WeatherData;
 import com.tonal.test.data.repository.WeatherRepository;
@@ -25,8 +28,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Completable;
+import io.reactivex.CompletableObserver;
 import io.reactivex.Observable;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 import io.reactivex.observables.GroupedObservable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -51,14 +60,15 @@ public class WeatherListViewModel extends BaseObservable {
     public final ObservableField<String> city = new ObservableField<>();
     public final ObservableField<String> country = new ObservableField<>();
     private Context context;
-
+    private CityDailyWeather cityDailyWeather;
 
     public WeatherListViewModel(WeatherRepository repository, Context context) {
         this.repository = repository;
         this.context = context;
+
     }
 
-    public void getLatestWeatherData(String location) {
+    public void getLatestWeatherData( String location) {
 
         //clear previous results
         weatherData.clear();
@@ -68,6 +78,7 @@ public class WeatherListViewModel extends BaseObservable {
         errorViewShowing.set(false);
         emptyViewShowing.set(false);
 
+
         repository.getWeather(location)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
@@ -76,24 +87,14 @@ public class WeatherListViewModel extends BaseObservable {
                     Collections.sort(weatherData,
                             (o1, o2) -> Long.compare(o1.getDate(), o2.getDate()));
 
-                    return new CityDailyWeather(results.getCity(), weatherData);
+                    cityDailyWeather = new CityDailyWeather(results.getCity(), weatherData);
+                    return cityDailyWeather;
                 })
                 .subscribe(new DisposableSingleObserver<CityDailyWeather>() {
 
                     @Override
                     public void onSuccess(CityDailyWeather cityDailyWeather) {
-                        boolean isEmpty = cityDailyWeather == null || cityDailyWeather.getWeather().isEmpty();
-
-                        if (!isEmpty) {
-                            weatherData.addAll(cityDailyWeather.getWeather());
-                            city.set(cityDailyWeather.getCity().getName());
-                            country.set(cityDailyWeather.getCity().getCountry());
-                            isDataLoaded.set(true);
-                        }
-
-                        emptyViewShowing.set(isEmpty);
-                        isDataLoading.set(false);
-                        errorViewShowing.set(false);
+                        getDailyWeather(location);
                     }
 
                     @Override
@@ -110,6 +111,48 @@ public class WeatherListViewModel extends BaseObservable {
                 });
     }
 
+    private void getDailyWeather(String location){
+        repository.getTodayWeatherData(location)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread()).subscribe(new SingleObserver<WeatherData>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onSuccess(WeatherData results) {
+                boolean isEmpty = results == null ;
+                if (!isEmpty) {
+
+                    DailyWeather we = new DailyWeather(results.getDt()*1000,results.getMain().getTempMin()
+                            ,results.getMain().getTempMax(),results.getMain().getHumidity());
+                    we.setViewType(0);
+
+                    weatherData.add(we);
+                    weatherData.addAll(cityDailyWeather.getWeather());
+                    city.set(cityDailyWeather.getCity().getName());
+                    country.set(cityDailyWeather.getCity().getCountry());
+                    isDataLoaded.set(true);
+                }
+                emptyViewShowing.set(isEmpty);
+                isDataLoading.set(false);
+                errorViewShowing.set(false);
+            }
+            @Override
+            public void onError(Throwable throwable) {
+                errorViewShowing.set(true);
+                isDataLoading.set(false);
+                emptyViewShowing.set(false);
+                isDataLoaded.set(false);
+
+
+                errorString.set(getErrorMessage(throwable));
+                throwable.printStackTrace();
+            }
+        });
+
+    }
     private String getErrorMessage(Throwable throwable) {
         if (throwable instanceof HttpException) {
             // We had non-2XX http error
@@ -189,11 +232,15 @@ public class WeatherListViewModel extends BaseObservable {
             temperature = weather.getMain();
 
             if (dailyWeather == null) {
-                dailyWeather = new DailyWeather(date.getTime(), temperature.getTempMin(), temperature.getTempMax(), temperature.getHumidity());
+                dailyWeather = new DailyWeather(date.getTime(), temperature.getTempMin(), temperature.getTempMax(),
+                        temperature.getHumidity());
+                dailyWeather.setViewType(1);
             } else {
                 dailyWeather.setTempMin(Math.min(dailyWeather.getTempMin(), temperature.getTempMin()));
                 dailyWeather.setTempMax(Math.max(dailyWeather.getTempMax(), temperature.getTempMax()));
                 dailyWeather.setHumidityAvg((dailyWeather.getHumidityAvg() + temperature.getHumidity()) / 2);
+                dailyWeather.setViewType(1);
+
             }
         }
         return dailyWeather;

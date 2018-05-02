@@ -14,6 +14,7 @@ public class WeatherViewHolder extends RecyclerView.ViewHolder {
 
     private ItemBinding binding;
 
+
     public WeatherViewHolder(ItemBinding binding) {
         super(binding.getRoot());
         this.binding = binding;

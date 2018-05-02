@@ -1,6 +1,7 @@
 package com.tonal.test.data.remote;
 
 import com.tonal.test.data.model.Results;
+import com.tonal.test.data.model.WeatherData;
 import com.tonal.test.utils.APIUtils;
 
 import io.reactivex.Single;
@@ -19,6 +20,11 @@ public interface APIService {
 
     @GET("forecast")
     public Single<Results> getWeatherData(@Query("zip") String zipcode, @Query("appid") String appId
+            , @Query("units") String units);
+
+    //api.openweathermap.org/data/2.5/weather?zip=94040,us
+    @GET("weather")
+    public Single<WeatherData> getTodaysWeather(@Query("zip") String zipcode, @Query("appid") String appId
             , @Query("units") String units);
 
     public class Creator {
