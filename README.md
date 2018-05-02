@@ -1,5 +1,10 @@
 # TonalCodeChallenge
 
+#Update
+
+Added Todays weather as the Fisrt Record.
+Next 5 records displayed are 5 Days Weather
+
 # Getting Started
 
 Clone the Repository
@@ -34,3 +39,5 @@ for each day.
 1) UI only shows proof of concept and can be improved
 2) Did not test the application for landscape mode.
 3) Could have written more unit test cases specially around view model. Skipped this as did not want to spend more than 2-3 hours on the app development.
+
+
